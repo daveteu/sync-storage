@@ -2,18 +2,16 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import handleError from './helpers/handleError';
 
-type KeyType = string;
+
 
 class SyncStorage {
-  data: Map<*, *> = new Map();
+  data = new Map();
 
-  loading: boolean = true;
+  loading = true;
 
-  init(): Promise<Array<*>> {
-    return AsyncStorage.getAllKeys().then((keys: Array<KeyType>) =>
-      AsyncStorage.multiGet(keys).then((data: Array<Array<KeyType>>): Array<
-        *,
-      > => {
+  init = () => {
+    return AsyncStorage.getAllKeys().then((keys) =>
+      AsyncStorage.multiGet(keys).then((data) => {
         data.forEach(this.saveItem.bind(this));
 
         return [...this.data];
@@ -21,25 +19,25 @@ class SyncStorage {
     );
   }
 
-  get(key: KeyType): any {
+  get = async (key) => {
     return this.data.get(key);
   }
 
-  set(key: KeyType, value: any): Promise<*> {
+  set = async (key, value) => {
     if (!key) return handleError('set', 'a key');
 
     this.data.set(key, value);
     return AsyncStorage.setItem(key, JSON.stringify(value));
   }
 
-  remove(key: KeyType): Promise<*> {
+  remove = async (key) => {
     if (!key) return handleError('remove', 'a key');
 
     this.data.delete(key);
     return AsyncStorage.removeItem(key);
   }
 
-  saveItem(item: Array<KeyType>) {
+  saveItem = async (item) => {
     let value;
 
     try {
@@ -52,7 +50,7 @@ class SyncStorage {
     this.loading = false;
   }
 
-  getAllKeys(): Array<*> {
+  getAllKeys = async () => {
     return Array.from(this.data.keys());
   }
 }
